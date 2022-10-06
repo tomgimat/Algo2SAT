@@ -11,6 +11,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class TP1 {
     public static ArrayList<ArrayList<Integer>> clauses;
@@ -30,20 +31,17 @@ public class TP1 {
         Scanner sc = new Scanner(path);
 
         nombre_de_sommets = sc.nextInt() * 2;
-        System.out.println(nombre_de_sommets);
 
         int index = 0;
         Graph<Integer> graph = new Graph<Integer>(nombre_de_sommets);
         while(sc.hasNextLine()){
             int litteral1 = sc.nextInt();
-            System.out.println(litteral1);
             int litteral2 = sc.nextInt();
             sc.nextInt();
-            System.out.println(litteral2);
             graph.addArc(litteralToVertex(-litteral1), litteralToVertex(litteral2), index++);
             graph.addArc(litteralToVertex(-litteral2), litteralToVertex(litteral1), index++);
         }
-        System.out.println(graph.toString());
+        System.out.println(graph.parcours_en_profondeur());
 
 //        for(String line: Files.readAllLines(path)){
 //            if (line.startsWith("p")) {
