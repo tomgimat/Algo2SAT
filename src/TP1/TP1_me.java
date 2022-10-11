@@ -1,19 +1,11 @@
 package TP1;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.lang.reflect.Array;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Scanner;
-import java.util.stream.Collectors;
+import java.util.*;
 
-public class TP1 {
+public class TP1_me {
     public static ArrayList<ArrayList<Integer>> clauses;
     public static int nombre_de_sommets;
     public static void main(String[] args) throws IOException {
@@ -33,16 +25,24 @@ public class TP1 {
         nombre_de_sommets = sc.nextInt() * 2;
 
         int index = 0;
-        Graph<Integer> graph = new Graph<Integer>(nombre_de_sommets);
+        Graph_me<Integer> graph = new Graph_me<Integer>(nombre_de_sommets);
         while(sc.hasNextLine()){
             int litteral1 = sc.nextInt();
             int litteral2 = sc.nextInt();
             sc.nextInt();
+         //   System.out.println("Arc numero " + index++ + " du sommet '"+ litteralToVertex(-litteral1) + "' vers le sommet '" + litteralToVertex(litteral2) + '"');
+
             graph.addArc(litteralToVertex(-litteral1), litteralToVertex(litteral2), index++);
+         //   System.out.println("Arc numero " + index++ + " du sommet '"+ litteralToVertex(-litteral2) + "' vers le sommet '" + litteralToVertex(litteral1) + '"');
             graph.addArc(litteralToVertex(-litteral2), litteralToVertex(litteral1), index++);
         }
-        System.out.println(graph.parcours_en_profondeur());
-
+        graph.parcours_en_profondeur();
+        graph.toString();
+        System.out.println("[---- DATES ----]");
+        for (LinkedList<Graph_me<Integer>.Edge> name : graph.getDates().keySet()) {
+            String value = Arrays.toString(graph.getDates().get(name));
+            System.out.println(value);
+        }
 //        for(String line: Files.readAllLines(path)){
 //            if (line.startsWith("p")) {
 //                nombre_de_variables = (int) line.charAt(6);
