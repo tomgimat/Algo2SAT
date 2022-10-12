@@ -26,23 +26,37 @@ public class TP1_me {
 
         int index = 0;
         Graph_me<Integer> graph = new Graph_me<Integer>(nombre_de_sommets);
+        Graph_me<Integer> graph_transposed = new Graph_me<Integer>(nombre_de_sommets);
         while(sc.hasNextLine()){
             int litteral1 = sc.nextInt();
             int litteral2 = sc.nextInt();
             sc.nextInt();
-         //   System.out.println("Arc numero " + index++ + " du sommet '"+ litteralToVertex(-litteral1) + "' vers le sommet '" + litteralToVertex(litteral2) + '"');
 
-            graph.addArc(litteralToVertex(-litteral1), litteralToVertex(litteral2), index++);
-         //   System.out.println("Arc numero " + index++ + " du sommet '"+ litteralToVertex(-litteral2) + "' vers le sommet '" + litteralToVertex(litteral1) + '"');
-            graph.addArc(litteralToVertex(-litteral2), litteralToVertex(litteral1), index++);
+
+            index++;
+            //System.out.println("Arc numero " + index++ + " du sommet '"+ litteralToVertex(-litteral1) + "' vers le sommet '" + litteralToVertex(litteral2) + '"');
+            graph.addArc(litteralToVertex(-litteral1), litteralToVertex(litteral2), index);
+            //Pour le graphe transposé, on inverse simplement l'ordre des arcs.
+            graph_transposed.addArc( litteralToVertex(litteral2), litteralToVertex(-litteral1),index);
+
+            index++;
+            //System.out.println("Arc numero " + index++ + " du sommet '"+ litteralToVertex(-litteral2) + "' vers le sommet '" + litteralToVertex(litteral1) + '"');
+            graph.addArc(litteralToVertex(-litteral2), litteralToVertex(litteral1), index);
+            graph_transposed.addArc( litteralToVertex(litteral1), litteralToVertex(-litteral2), index);
         }
         graph.parcours_en_profondeur();
-        graph.toString();
-        System.out.println("[---- DATES ----]");
-        for (LinkedList<Graph_me<Integer>.Edge> name : graph.getDates().keySet()) {
-            String value = Arrays.toString(graph.getDates().get(name));
-            System.out.println(value);
+        for(List<LinkedList<Graph_me<Integer>.Edge>> cfc : graph_transposed.parcours_en_profondeur(graph.getDates())){
+            for(LinkedList<Graph_me<Integer>.Edge> sommet : cfc){
+                System.out.print("SOMMET------");
+            }
+            System.out.println("CFC");
         }
+
+//        System.out.println("[---- DATES ----]");
+//        for (LinkedList<Graph_me<Integer>.Edge> name : graph.getDates().keySet()) {
+//            String value = Integer.toString(graph.getDates().get(name));
+//            System.out.println(value);
+//        }
 //        for(String line: Files.readAllLines(path)){
 //            if (line.startsWith("p")) {
 //                nombre_de_variables = (int) line.charAt(6);
