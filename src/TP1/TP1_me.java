@@ -8,6 +8,7 @@ import java.util.*;
 public class TP1_me {
     public static ArrayList<ArrayList<Integer>> clauses;
     public static int nombre_de_sommets;
+    public static HashMap<Integer, Integer> litterals;
     public static void main(String[] args) throws IOException {
 
         try {
@@ -18,6 +19,8 @@ public class TP1_me {
     }
     public static void read()
             throws Exception {
+
+        litterals = new HashMap<>();
         Path path = Paths.get("src/TP1/formule.txt");
 
         Scanner sc = new Scanner(path);
@@ -45,37 +48,55 @@ public class TP1_me {
             graph_transposed.addArc( litteralToVertex(litteral1), litteralToVertex(-litteral2), index);
         }
         graph.parcours_en_profondeur();
-        for(List<LinkedList<Graph_me<Integer>.Edge>> cfc : graph_transposed.parcours_en_profondeur(graph.getDates())){
-            for(LinkedList<Graph_me<Integer>.Edge> sommet : cfc){
-                System.out.print("SOMMET------");
+
+        //Graphe des composantes fortement connexes
+
+        System.out.println(check2SAT(graph_transposed.parcours_en_profondeur_transpose(graph.getDates())));
+
+        for(List<Integer> cfc : graph_transposed.parcours_en_profondeur_transpose(graph.getDates())){
+            System.out.println("[------CFC------]");
+            for(Integer sommet : cfc){
+                System.out.println("SOMMET: " + sommet);
             }
-            System.out.println("CFC");
+            System.out.println("[--------------]");
+            System.out.println();
+
         }
 
-//        System.out.println("[---- DATES ----]");
-//        for (LinkedList<Graph_me<Integer>.Edge> name : graph.getDates().keySet()) {
-//            String value = Integer.toString(graph.getDates().get(name));
-//            System.out.println(value);
-//        }
-//        for(String line: Files.readAllLines(path)){
-//            if (line.startsWith("p")) {
-//                nombre_de_variables = (int) line.charAt(6);
-//                nombre_de_clauses = (int) line.charAt(8);
-//                clauses = new ArrayList<>(nombre_de_clauses);
-//            } else if(!line.startsWith("c") && line.endsWith("0")) {
-//                String[] line_splitted = line.substring(0, line.length()-1).split(" ");
-//                clauses.add(new ArrayList<Integer>(nombre_de_variables));
-//                for(String str : line_splitted){
-//                    clauses.get(clauses.size()-1).add(Integer.parseInt(str));
-//                }
-//
-//            } else {
-//                throw new Exception("ddddd");
-//            }
-//        }
+        System.out.println("[---- DATES DE FIN ----]");
+        for (Integer name : graph.getDates().keySet()) {
+            String value = Integer.toString(graph.getDates().get(name));
+            System.out.println("Le sommet: " + name + " se termine a la date: " + value);
+        }
+        System.out.println("[------------------]");
+
+
     }
 
     public static int litteralToVertex(int litteral){
-        return litteral>0 ? (2*litteral-2) : (-2*litteral-1);
+        int vertex =  litteral>0 ? (2*litteral-2) : (-2*litteral-1);
+        litterals.put(vertex, litteral);
+        return vertex;
     }
+    public static boolean checkCFC(List<Integer> sommets){
+        List<Integer> litterals_ = new ArrayList<>();
+        sommets.forEach(s->{
+            litterals_.add(litterals.get(s));
+        });
+        for(Integer litteral : litterals_){
+            if(litterals_.contains(-litteral)) return false;
+        }
+        return true;
+    }
+
+    public static String check2SAT(List<List<Integer>> composantes) {
+        for (List<Integer> c : composantes) {
+            if (!checkCFC(c)) {
+                return "La formule est insatisfaisable";
+            }
+            return "La formule est satisfiable";
+        }
+        return "pipi caca";
+    }
+
 }

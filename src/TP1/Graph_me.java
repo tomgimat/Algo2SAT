@@ -6,8 +6,8 @@ public class Graph_me<Label> {
 
     private int cardinal;
     private ArrayList<LinkedList<Edge>> incidency;
-    private LinkedHashMap<LinkedList<Edge>, Integer> dates;
-    private LinkedList<LinkedList<Edge>> marked;
+    private LinkedHashMap<Integer, Integer> dates;
+    private LinkedList<Integer> marked;
     private int date;
 
     public Graph_me(int size) {
@@ -21,7 +21,7 @@ public class Graph_me<Label> {
         }
     }
 
-    public LinkedHashMap<LinkedList<Edge>, Integer> getDates() {
+    public LinkedHashMap<Integer, Integer> getDates() {
         return dates;
     }
 
@@ -46,35 +46,22 @@ public class Graph_me<Label> {
     }
 
     public void parcours_en_profondeur() {
-        for (LinkedList<Edge> sommet : incidency) {
-            if (!marked.contains(sommet)) {
-                explore(sommet);
+        for (int i = 0; i < incidency.size(); i++) {
+            if (!marked.contains(i)) {
+                explore(i);
                 date++;
             }
         }
     }
-    public List<List<LinkedList<Edge>>> parcours_en_profondeur(LinkedHashMap<LinkedList<Edge>, Integer> dates) {
+    public List<List<Integer>> parcours_en_profondeur_transpose(LinkedHashMap<Integer, Integer> dates) {
 
-        List<List<LinkedList<Edge>>> result = new ArrayList<>();
-        List<LinkedList<Edge>> alKeys = new ArrayList<LinkedList<Edge>>(dates.keySet());
+        List<List<Integer>> result = new ArrayList<>();
+        List<Integer> alKeys = new ArrayList<Integer>(dates.keySet());
         Collections.reverse(alKeys);
 
-        for(LinkedList<Edge> dt : dates.keySet()){
-           for(Edge edge : dt){
-               System.out.println(edge.source);
-           }
-        }
-
-        System.out.println("-----------");
-        for(LinkedList<Edge> dt : alKeys){
-            for(Edge edge : dt){
-                System.out.println(edge.source);
-            }
-        }
-
-        for (LinkedList<Edge> sommet : alKeys) {
+        for (Integer sommet : alKeys) {
             if (!marked.contains(sommet)) {
-                List<LinkedList<Edge>> cfc = new LinkedList<>();
+                List<Integer> cfc = new LinkedList<>();
                 cfc = explore(sommet,cfc);
                 date++;
                 result.add(cfc);
@@ -83,24 +70,25 @@ public class Graph_me<Label> {
         return result;
     }
 
-    public void explore(LinkedList<Edge> sommet) {
+    public void explore(Integer sommet) {
         marked.add(sommet);
-        for (Edge s : sommet) {
-            if (!marked.contains(incidency.get(s.destination))) {
+        for (Edge s : incidency.get(sommet)) {
+            if (!marked.contains(s.destination)) {
+
                 date += 1;
-                explore(incidency.get(s.destination));
+                explore(s.destination);
             }
         }
         date += 1;
         dates.put(sommet, date);
     }
-    public List<LinkedList<Edge>> explore(LinkedList<Edge> sommet, List<LinkedList<Edge>> cfc) {
+    public List<Integer> explore(Integer sommet, List<Integer> cfc) {
         cfc.add(sommet);
         marked.add(sommet);
-        for (Edge s : sommet) {
-            if (!marked.contains(incidency.get(s.destination))) {
+        for (Edge s : incidency.get(sommet)) {
+            if (!marked.contains(sommet)) {
                 date += 1;
-                cfc = explore(incidency.get(s.destination), cfc);
+                cfc = explore(sommet, cfc);
             }
         }
         date += 1;
